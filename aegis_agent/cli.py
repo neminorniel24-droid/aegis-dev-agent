@@ -8,7 +8,7 @@ from rich.panel import Panel
 
 app = typer.Typer(
     name="aegis-agent",
-    help="Local development assistant for Air Aegis.",
+    help="AI-assisted GitHub development automation tool.",
 )
 console = Console()
 
@@ -78,7 +78,7 @@ def task(description: str) -> None:
         Panel(
             f"[bold]Task[/bold]\n{development_task.description}\n\n"
             f"[dim]Created: {development_task.created_at}[/dim]",
-            title="Air Aegis Task",
+            title="CommitPilot Task",
         )
     )
 
@@ -102,7 +102,7 @@ def inspect() -> None:
             )
             + "\n\n[bold]README:[/bold]\n"
             + context.readme[:1500],
-            title="Air Aegis Inspection",
+            title="CommitPilot Inspection",
         )
     )
 
