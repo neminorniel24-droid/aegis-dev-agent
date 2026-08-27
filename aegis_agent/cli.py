@@ -105,3 +105,25 @@ def inspect() -> None:
             title="Air Aegis Inspection",
         )
     )
+
+
+@app.command()
+def plan(description: str) -> None:
+    """Create an execution plan for an Air Aegis task."""
+    from aegis_agent.inspector import inspect_project
+    from aegis_agent.planner import create_plan
+    from aegis_agent.task import DevelopmentTask
+
+    task_obj = DevelopmentTask.create(description)
+    context = inspect_project()
+    task_plan = create_plan(task_obj, context)
+
+    console.print(
+        Panel(
+            "\n".join(
+                f"[bold]{index}.[/bold] {step}"
+                for index, step in enumerate(task_plan.steps, 1)
+            ),
+            title=f"Plan: {task_obj.description}",
+        )
+    )
