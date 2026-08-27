@@ -45,3 +45,23 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+
+
+@app.command()
+def files() -> None:
+    """List files in the Air Aegis repository."""
+    from aegis_agent.workspace import Workspace
+
+    workspace = Workspace()
+
+    for file_path in workspace.list_files():
+        console.print(file_path)
+
+
+@app.command()
+def read(path: str) -> None:
+    """Read a file from the Air Aegis repository."""
+    from aegis_agent.workspace import Workspace
+
+    workspace = Workspace()
+    console.print(workspace.read(path))
