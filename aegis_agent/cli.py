@@ -127,3 +127,49 @@ def plan(description: str) -> None:
             title=f"Plan: {task_obj.description}",
         )
     )
+
+
+@app.command()
+def run(description: str) -> None:
+    """Execute validation for an Air Aegis development task."""
+    from aegis_agent.executor import Executor
+    from aegis_agent.inspector import inspect_project
+    from aegis_agent.planner import create_plan
+    from aegis_agent.task import DevelopmentTask
+
+    task_obj = DevelopmentTask.create(description)
+    context = inspect_project()
+    task_plan = create_plan(task_obj, context)
+
+    console.print(
+        Panel(
+            "\n".join(
+                f"[bold]{index}.[/bold] {step}"
+                for index, step in enumerate(task_plan.steps, 1)
+            ),
+            title="Execution Plan",
+        )
+    )
+
+    executor = Executor()
+
+    console.print("\n[bold]Running Air Aegis tests...[/bold]")
+
+    result = executor.run(["pytest", "-q"])
+
+    if result.stdout:
+        console.print(result.stdout)
+
+    if result.returncode != 0:
+        if result.stderr:
+            console.print(f"[red]{result.stderr}[/red]")
+
+        console.print(
+            "[red]Validation failed. No commit created.[/red]"
+        )
+        raise typer.Exit(code=1)
+
+    console.print(
+        "[bold green]Tests passed. Agent is ready for "
+        "the implementation stage.[/bold green]"
+    )
