@@ -130,9 +130,15 @@ def plan(description: str) -> None:
 
 
 @app.command()
-def run(description: str) -> None:
-    """Execute validation for an Air Aegis development task."""
-    from aegis_agent.executor import Executor
+def run(
+    description: str,
+    apply: bool = typer.Option(
+        False,
+        "--apply",
+        help="Apply the AI-generated patch.",
+    ),
+) -> None:
+    """Generate and optionally apply an Air Aegis implementation."""
     from aegis_agent.inspector import inspect_project
     from aegis_agent.planner import create_plan
     from aegis_agent.task import DevelopmentTask
@@ -151,25 +157,41 @@ def run(description: str) -> None:
         )
     )
 
-    executor = Executor()
+    if not apply:
+        console.print(
+            "\n[yellow]Dry run only.[/yellow] "
+            "Use --apply to generate and apply the implementation."
+        )
+        return
+
+    console.print("\n[bold]Generating implementation...[/bold]")
+
+    from aegis_agent.runner import execute_task
+
+    changes = execute_task(description)
+
+    console.print(
+        f"[green]Generated {len(changes)} file change(s).[/green]"
+    )
+
+    for change in changes:
+        console.print(f"  • {change.path}")
 
     console.print("\n[bold]Running Air Aegis tests...[/bold]")
 
-    result = executor.run(["pytest", "-q"])
+    from aegis_agent.executor import Executor
+
+    result = Executor().run(["pytest", "-q"])
 
     if result.stdout:
         console.print(result.stdout)
 
     if result.returncode != 0:
-        if result.stderr:
-            console.print(f"[red]{result.stderr}[/red]")
-
         console.print(
-            "[red]Validation failed. No commit created.[/red]"
+            "[red]Tests failed. Changes were applied but NOT committed.[/red]"
         )
         raise typer.Exit(code=1)
 
     console.print(
-        "[bold green]Tests passed. Agent is ready for "
-        "the implementation stage.[/bold green]"
+        "[bold green]Implementation applied and tests passed.[/bold green]"
     )
