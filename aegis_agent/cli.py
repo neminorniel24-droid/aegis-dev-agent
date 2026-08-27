@@ -65,3 +65,43 @@ def read(path: str) -> None:
 
     workspace = Workspace()
     console.print(workspace.read(path))
+
+
+@app.command()
+def task(description: str) -> None:
+    """Create and display an Air Aegis development task."""
+    from aegis_agent.task import DevelopmentTask
+
+    development_task = DevelopmentTask.create(description)
+
+    console.print(
+        Panel(
+            f"[bold]Task[/bold]\n{development_task.description}\n\n"
+            f"[dim]Created: {development_task.created_at}[/dim]",
+            title="Air Aegis Task",
+        )
+    )
+
+
+@app.command()
+def inspect() -> None:
+    """Inspect the Air Aegis project."""
+    from aegis_agent.inspector import inspect_project
+
+    context = inspect_project()
+
+    console.print(
+        Panel(
+            f"[bold]Files:[/bold] {len(context.files)}\n\n"
+            + "\n".join(context.files[:40])
+            + (
+                "\n... "
+                f"({len(context.files) - 40} more)"
+                if len(context.files) > 40
+                else ""
+            )
+            + "\n\n[bold]README:[/bold]\n"
+            + context.readme[:1500],
+            title="Air Aegis Inspection",
+        )
+    )
