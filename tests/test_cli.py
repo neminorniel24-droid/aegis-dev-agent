@@ -17,3 +17,10 @@ def test_status_command():
     result = runner.invoke(app, ["status"])
 
     assert result.exit_code == 0
+
+
+def test_git_status_command():
+    result = runner.invoke(app, ["git-status"])
+
+    assert result.exit_code == 0
+    assert "CommitPilot Git Status" in result.stdout

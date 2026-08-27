@@ -195,3 +195,29 @@ def run(
     console.print(
         "[bold green]Implementation applied and tests passed.[/bold green]"
     )
+
+
+@app.command("git-status")
+def git_status() -> None:
+    """Show Git status for the configured target repository."""
+    from commitpilot_git import GitManager
+
+    from pathlib import Path
+
+    repo = Path.home() / "projects" / "air-aegis"
+    manager = GitManager(repo)
+    status = manager.status()
+
+    console.print(
+        Panel(
+            f"[bold]Branch:[/bold] {status.branch}\n"
+            f"[bold]Clean:[/bold] {status.clean}\n"
+            + (
+                "\n[bold]Changes:[/bold]\n"
+                + "\n".join(status.changes)
+                if status.changes
+                else "\n[bold]Changes:[/bold] none"
+            ),
+            title="CommitPilot Git Status",
+        )
+    )
