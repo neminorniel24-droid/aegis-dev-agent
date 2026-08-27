@@ -1,0 +1,10 @@
+[project]
+name = "aegis-dev-agent"
+version = "0.1.0"
+description = "Local development automation agent for Air Aegis"
+
+[project.scripts]
+aegis-agent = "aegis_agent.cli:main"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
