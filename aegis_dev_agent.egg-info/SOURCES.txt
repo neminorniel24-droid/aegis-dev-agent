@@ -1,0 +1,10 @@
+README.md
+pyproject.toml
+aegis_agent/__init__.py
+aegis_agent/cli.py
+aegis_dev_agent.egg-info/PKG-INFO
+aegis_dev_agent.egg-info/SOURCES.txt
+aegis_dev_agent.egg-info/dependency_links.txt
+aegis_dev_agent.egg-info/entry_points.txt
+aegis_dev_agent.egg-info/top_level.txt
+tests/test_cli.py
